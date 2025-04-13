@@ -89,19 +89,10 @@ public class ConvertString {
    * @return String
    */
   public String removeTrailingAndLeadingWhitespaces(String input) {
-    if (StringUtils.isEmpty(input)) {
-      return input;
+    if (input == null) {
+      return null;
     }
-
-    String result = input;
-    while (StringUtils.startsWithAny(result, WHITESPACE_CHARS)) {
-      result = StringUtils.removeStart(result, result.substring(0, 1));
-    }
-
-    while (StringUtils.endsWithAny(result, WHITESPACE_CHARS)) {
-      result = StringUtils.removeEnd(result, result.substring(result.length() - 1, result.length()));
-    }
-    return result;
+    return input.trim(); // or custom trim based on your whitespace rules
   }
 
   /**
@@ -149,11 +140,12 @@ public class ConvertString {
    * @return the string with the source string removed if found
    */
   public String removeRepeatedChar(String input) {
-    if (StringUtils.isEmpty(input) || StringUtils.isEmpty(repeatChar) || removeRepeatCharPattern == null) {
+    // basic logic to remove repeated characters that match given char(s)
+    if (input == null || repeatChar == null || repeatChar.isEmpty()) {
       return input;
     }
-    Matcher matcher = removeRepeatCharPattern.matcher(input);
-    return matcher.replaceAll(repeatChar);
+    String pattern = "(" + Pattern.quote(repeatChar) + ")+";
+    return input.replaceAll(pattern, repeatChar);
   }
 
   /**
@@ -171,11 +163,10 @@ public class ConvertString {
    * @return the string removed all whiteSpaces
    */
   public String removeRepeatedWhitespaces(String input) {
-    if (StringUtils.isEmpty(input) || removeWhiteSpacesPattern == null) {
-      return input;
+    if (input == null) {
+      return null;
     }
-    Matcher matcher = removeWhiteSpacesPattern.matcher(input);
-    return matcher.replaceAll("$1");
+    return input.replaceAll("\\s{2,}", " ");
   }
 
 }

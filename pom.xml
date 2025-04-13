@@ -170,6 +170,25 @@
       <version>${junit.version}</version>
       <scope>test</scope>
     </dependency>
+
+    <dependency>
+  <groupId>org.apache.avro</groupId>
+  <artifactId>avro</artifactId>
+  <version>1.11.1</version> <!-- or version compatible with Wrangler -->
+</dependency>
+
+<dependency>
+  <groupId>org.slf4j</groupId>
+  <artifactId>slf4j-api</artifactId>
+  <version>1.7.36</version> <!-- Match logback version -->
+</dependency>
+
+<dependency>
+  <groupId>ch.qos.logback</groupId>
+  <artifactId>logback-classic</artifactId>
+  <version>1.2.11</version>
+</dependency>
+
   </dependencies>
 
   <build>

@@ -41,6 +41,42 @@ options {
 /**
  * Parser Grammar for recognizing tokens and constructs of the directives language.
  */
+
+BYTE_SIZE: NUMBER_PART WS? BYTE_UNIT;
+TIME_DURATION: NUMBER_PART WS? TIME_UNIT;
+
+fragment NUMBER_PART: [0-9]+ ('.' [0-9]*)? | '.' [0-9]+;
+fragment BYTE_UNIT: ('B'|'KB'|'MB'|'GB'|'TB') ('S'?);
+fragment TIME_UNIT: ('NS'|'MS'|'S'|'M'|'H'|'D');
+fragment WS: [ \t]+;
+
+OBrace   : '{';
+CBrace   : '}';
+SColon   : ';';
+Or       : '||';
+And      : '&&';
+Equals   : '==';
+NEquals  : '!=';
+GTEquals : '>=';
+LTEquals : '<=';
+// ... keep all other existing lexer rules the same ...
+
+Bool
+ : 'true'
+ | 'false'
+ ;
+
+Number
+ : Int ('.' Digit*)?
+ ;
+
+Identifier
+ : [a-zA-Z_\-] [a-zA-Z_0-9\-]*
+ ;
+
+// ... rest of existing lexer rules ...
+
+
 recipe
  : statements EOF
  ;
@@ -64,8 +100,17 @@ directive
     | stringList
     | numberRanges
     | properties
+    | byteSize
+    | timeDuration
   )*?
   ;
+
+byteSize: BYTE_SIZE;
+timeDuration: TIME_DURATION;
+
+value
+ : String | Number | Column | Bool | byteSize | timeDuration
+ ;
 
 ifStatement
   : ifStat elseIfStat* elseStat? '}'
@@ -310,4 +355,12 @@ fragment Int
 
 fragment Digit
  : [0-9]
+ ;
+
+BYTE_SIZE
+ : BYTE_SIZE
+ ;
+
+TIME_DURATION
+ : TIME_DURATION
  ;

@@ -31,6 +31,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.security.CodeSource;
 import java.security.MessageDigest;
@@ -41,6 +42,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -50,32 +52,36 @@ import static org.junit.Assert.assertTrue;
 public class ValidateStandardTest {
 
   private static Map<String, Standard> getSpecsInArchive()
-    throws IOException, NoSuchAlgorithmException {
+  throws IOException, NoSuchAlgorithmException, URISyntaxException {
+
+
     Map<String, Standard> schemas = new HashMap<>();
     CodeSource src = ValidateStandard.class.getProtectionDomain().getCodeSource();
     if (src != null) {
-      File schemasRoot =
-        Paths.get(src.getLocation().getPath(), ValidateStandard.SCHEMAS_RESOURCE_PATH).toFile();
+      File jarLocation = new File(src.getLocation().toURI());
+      File schemasRoot = new File(jarLocation, ValidateStandard.SCHEMAS_RESOURCE_PATH);
+      // ... rest of the code ...
 
       if (!schemasRoot.isDirectory()) {
         throw new IOException(
           String.format("Schemas root %s was not a directory", schemasRoot.getPath()));
       }
-
+  
       for (File f : schemasRoot.listFiles()) {
         if (f.toPath().endsWith(ValidateStandard.MANIFEST_PATH)) {
           continue;
         }
-
+  
         String hash = calcHash(new FileInputStream(f));
         schemas.put(
           FilenameUtils.getBaseName(f.getName()),
           new Standard(hash, FilenameUtils.getExtension(f.getName())));
       }
     }
-
+  
     return schemas;
   }
+  
 
   private static String calcHash(InputStream is) throws IOException, NoSuchAlgorithmException {
     byte[] bytes = IOUtils.toByteArray(is);
